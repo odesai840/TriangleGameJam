@@ -29,13 +29,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ImpactStrength: 1.9859473e-13
-    - _ImpactWiggleAmount: 2.7803218e-13
+    - _ImpactRadius: 100
+    - _ImpactStrength: 0.0022375982
+    - _ImpactWiggleAmount: 0.003915787
     - _PhaseOffset: 5
     - _WiggleAmount: 0.05
     - _WiggleFreq: 10
     - _WiggleSpeed: 2
     - _WrinkleAmount: 0.02
     m_Colors:
-    - _ImpactPoint: {r: 0.060920082, g: 0.49442172, b: 0, a: 0}
+    - _ImpactPoint: {r: 0.4783926, g: 0.11751409, b: 0, a: 0}
   m_BuildTextureStacks: []

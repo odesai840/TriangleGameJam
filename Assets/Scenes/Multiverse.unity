@@ -666,9 +666,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bubbleMaterial: {fileID: 2100000, guid: 4a71a989db81549098b0c9568cbecaea, type: 2}
-  maxImpactStrength: 0.5
+  maxImpactStrength: 0.4
   maxImpactWiggle: 0.7
-  recoverySpeed: 2
+  recoverySpeed: 1.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
