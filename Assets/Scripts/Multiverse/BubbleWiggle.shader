@@ -11,7 +11,7 @@ Shader "Custom/BubbleWiggle"
         _ImpactPoint ("Impact Point", Vector) = (0,0,0,0)
         _ImpactStrength ("Impact Strength", Range(0, 0.2)) = 0.1
         _ImpactWiggleAmount ("Impact Wiggle Amount", Range(0, 10)) = 0.0
-        _ImpactRadius ("Impact Radius", Range(0, 100)) = 100.0  // New property!
+        _ImpactRadius ("Impact Radius", Range(0, 2)) = 2  // New property!
     }
     SubShader
     {
@@ -93,12 +93,12 @@ Shader "Custom/BubbleWiggle"
                 // Impact deformation: push vertices inward near the impact point.
                 float2 impactDir = pos - _ImpactPoint.xy;
                 float impactDist = length(impactDir);
-                if(impactDist < 0.5) // or use _ImpactRadius if that suits your scale better
+                if (impactDist < _ImpactRadius)
                 {
-                    float impactEffect = (0.5 - impactDist) * _ImpactStrength;
+                    float impactEffect = (_ImpactRadius - impactDist) * _ImpactStrength;
                     displacement -= impactEffect;
 
-                    float impactFactor = (0.5 - impactDist) / 0.5;
+                    float impactFactor = (_ImpactRadius - impactDist) / _ImpactRadius;
                     float extraWiggle = (smoothNoise(impactDir * 10.0 + float2(t, t)) - 0.5) * _ImpactWiggleAmount;
                     displacement += extraWiggle * impactFactor;
                 }
