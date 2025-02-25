@@ -2,41 +2,51 @@ using UnityEngine;
 
 public class BubbleDeform : MonoBehaviour
 {
-    public Material bubbleMaterial;      // Material using the wrinkly bubble shader.
-    public float maxImpactStrength = 0.1f; // The maximum deformation strength upon collision.
-    public float recoverySpeed = 1f;     // How quickly the impact effect decays.
+    public Material bubbleMaterial;      // Material using the above shader.
+    public float maxImpactStrength = 0.1f; // Maximum inward deformation.
+    public float maxImpactWiggle = 0.05f;  // Maximum extra wiggle amount upon impact.
+    public float recoverySpeed = 1f;       // Speed at which both effects decay.
 
     private float currentImpactStrength = 0f;
+    private float currentImpactWiggle = 0f;
 
     void Start()
     {
-        // Ensure initial impact strength is zero.
+        // Ensure initial impact values are zero.
         currentImpactStrength = 0f;
+        currentImpactWiggle = 0f;
         bubbleMaterial.SetFloat("_ImpactStrength", currentImpactStrength);
+        bubbleMaterial.SetFloat("_ImpactWiggleAmount", currentImpactWiggle);
     }
 
     void Update()
     {
-        // Gradually reduce the impact strength to zero over time.
+        // Gradually decay the impact effects over time.
         if (currentImpactStrength > 0)
         {
             currentImpactStrength = Mathf.Lerp(currentImpactStrength, 0f, Time.deltaTime * recoverySpeed);
             bubbleMaterial.SetFloat("_ImpactStrength", currentImpactStrength);
         }
+        if (currentImpactWiggle > 0)
+        {
+            currentImpactWiggle = Mathf.Lerp(currentImpactWiggle, 0f, Time.deltaTime * recoverySpeed);
+            bubbleMaterial.SetFloat("_ImpactWiggleAmount", currentImpactWiggle);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Get the first collision contact point.
+        // Get the collision contact point.
         Vector2 contactPoint = collision.GetContact(0).point;
-        // Convert the contact point from world space to the bubble's local space.
+        // Convert the contact point from world space to local space.
         Vector2 localContact = transform.InverseTransformPoint(contactPoint);
-
         // Pass the local collision point to the shader.
         bubbleMaterial.SetVector("_ImpactPoint", new Vector4(localContact.x, localContact.y, 0, 0));
 
-        // Set the current impact strength to maximum.
+        // Set the maximum values for impact strength and extra wiggle.
         currentImpactStrength = maxImpactStrength;
+        currentImpactWiggle = maxImpactWiggle;
         bubbleMaterial.SetFloat("_ImpactStrength", currentImpactStrength);
+        bubbleMaterial.SetFloat("_ImpactWiggleAmount", currentImpactWiggle);
     }
 }

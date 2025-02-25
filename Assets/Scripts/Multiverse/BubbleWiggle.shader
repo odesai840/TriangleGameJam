@@ -10,6 +10,7 @@ Shader "Custom/BubbleWiggle"
         _PhaseOffset ("Phase Offset Factor", Range(0,10)) = 5
         _ImpactPoint ("Impact Point", Vector) = (0,0,0,0)
         _ImpactStrength ("Impact Strength", Range(0, 0.2)) = 0.1
+        _ImpactWiggleAmount ("Impact Wiggle Amount", Range(0, 10)) = 0.0
     }
     SubShader
     {
@@ -43,19 +44,20 @@ Shader "Custom/BubbleWiggle"
             float _PhaseOffset;
             float4 _ImpactPoint;
             float _ImpactStrength;
+            float _ImpactWiggleAmount;
 
-            // Basic noise function
+            // Basic noise function.
             float myNoise(float2 p)
             {
                 return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
             }
 
-            // Smooth noise with bilinear interpolation
+            // Smooth noise with bilinear interpolation.
             float smoothNoise(float2 p)
             {
                 float2 i = floor(p);
                 float2 f = frac(p);
-                f = f * f * (3.0 - 2.0 * f);  // smoothstep interpolation
+                f = f * f * (3.0 - 2.0 * f);  // smoothstep interpolation.
                 float a = myNoise(i);
                 float b = myNoise(i + float2(1.0, 0.0));
                 float c = myNoise(i + float2(0.0, 1.0));
@@ -66,7 +68,7 @@ Shader "Custom/BubbleWiggle"
             v2f vert(appdata_t v)
             {
                 v2f o;
-                // Convert vertex to object space.
+                // Convert the vertex position into object space.
                 float3 localPos = mul(unity_WorldToObject, v.vertex).xyz;
                 float2 pos = localPos.xy;
                 float r = length(pos);
@@ -74,22 +76,26 @@ Shader "Custom/BubbleWiggle"
 
                 // Time factor for animation.
                 float t = _Time.y * _WiggleSpeed;
-
                 // Add a per-vertex random phase offset based on the angle.
                 float randomPhase = smoothNoise(float2(angle, 0.0)) * _PhaseOffset;
 
-                // Compute low-frequency noise and high-frequency noise using (angle, time + offset).
+                // Compute base noise terms.
                 float lowNoise = smoothNoise(float2(angle * _WiggleFreq, t + randomPhase)) - 0.5;
                 float highNoise = smoothNoise(float2(angle * _WiggleFreq * 3.0, t + randomPhase * 1.5)) - 0.5;
                 float displacement = lowNoise * _WiggleAmount + highNoise * _WrinkleAmount;
 
-                // Impact deformation: for vertices near the impact point, push them inward.
+                // Impact deformation: push vertices inward near the impact point.
                 float2 impactDir = pos - _ImpactPoint.xy;
                 float impactDist = length(impactDir);
-                if(impactDist < 0.5)
+                if(impactDist < 0.5) // Adjust the radius as needed.
                 {
                     float impactEffect = (0.5 - impactDist) * _ImpactStrength;
                     displacement -= impactEffect;
+
+                    // Extra localized wiggle near the impact.
+                    float impactFactor = (0.5 - impactDist) / 0.5;  // 1 at impact, 0 at the boundary.
+                    float extraWiggle = (smoothNoise(impactDir * 10.0 + float2(t, t)) - 0.5) * _ImpactWiggleAmount;
+                    displacement += extraWiggle * impactFactor;
                 }
 
                 float rNew = r + displacement;
