@@ -70,19 +70,22 @@ Shader "Custom/BubbleWiggle"
             v2f vert(appdata_t v)
             {
                 v2f o;
-                // Convert the vertex position into object space.
                 float3 localPos = v.vertex.xyz;
-
                 float2 pos = localPos.xy;
                 float r = length(pos);
-                float angle = atan2(pos.y, pos.x);
 
-                // Time factor for animation.
+                // If the vertex is at the center, don't displace it.
+                if(r < 0.001)
+                {
+                    o.vertex = UnityObjectToClipPos(v.vertex);
+                    o.uv = v.uv;
+                    return o;
+                }
+
+                float angle = atan2(pos.y, pos.x);
                 float t = _Time.y * _WiggleSpeed;
-                // Add a per-vertex random phase offset based on the angle.
                 float randomPhase = smoothNoise(float2(angle, 0.0)) * _PhaseOffset;
 
-                // Compute base noise terms.
                 float lowNoise = smoothNoise(float2(angle * _WiggleFreq, t + randomPhase)) - 0.5;
                 float highNoise = smoothNoise(float2(angle * _WiggleFreq * 3.0, t + randomPhase * 1.5)) - 0.5;
                 float displacement = lowNoise * _WiggleAmount + highNoise * _WrinkleAmount;
@@ -90,13 +93,12 @@ Shader "Custom/BubbleWiggle"
                 // Impact deformation: push vertices inward near the impact point.
                 float2 impactDir = pos - _ImpactPoint.xy;
                 float impactDist = length(impactDir);
-                if(impactDist < 0.5) // Adjust the radius as needed.
+                if(impactDist < 0.5) // or use _ImpactRadius if that suits your scale better
                 {
                     float impactEffect = (0.5 - impactDist) * _ImpactStrength;
                     displacement -= impactEffect;
 
-                    // Extra localized wiggle near the impact.
-                    float impactFactor = (_ImpactRadius - impactDist) / _ImpactRadius;
+                    float impactFactor = (0.5 - impactDist) / 0.5;
                     float extraWiggle = (smoothNoise(impactDir * 10.0 + float2(t, t)) - 0.5) * _ImpactWiggleAmount;
                     displacement += extraWiggle * impactFactor;
                 }
@@ -110,6 +112,7 @@ Shader "Custom/BubbleWiggle"
                 o.uv = v.uv;
                 return o;
             }
+
 
             fixed4 frag(v2f i) : SV_Target
             {

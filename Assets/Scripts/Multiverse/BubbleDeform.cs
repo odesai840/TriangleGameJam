@@ -15,7 +15,7 @@ public class BubbleDeform : MonoBehaviour
         // Create a unique instance of the material for this bubble.
         bubbleMaterial = Instantiate(bubbleMaterial);
         // Assign the new instance to the SpriteRenderer.
-        GetComponent<SpriteRenderer>().material = bubbleMaterial;
+        GetComponent<MeshRenderer>().material = bubbleMaterial;
 
         // Ensure initial impact values are zero.
         currentImpactStrength = 0f;
