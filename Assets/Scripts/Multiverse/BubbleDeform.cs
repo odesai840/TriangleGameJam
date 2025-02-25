@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BubbleDeform : MonoBehaviour
 {
-    public Material bubbleMaterial;      // Material using the above shader.
+    public Material bubbleMaterial;      // Material assigned in the Inspector.
     public float maxImpactStrength = 0.1f; // Maximum inward deformation.
     public float maxImpactWiggle = 0.05f;  // Maximum extra wiggle amount upon impact.
     public float recoverySpeed = 1f;       // Speed at which both effects decay.
@@ -12,6 +12,11 @@ public class BubbleDeform : MonoBehaviour
 
     void Start()
     {
+        // Create a unique instance of the material for this bubble.
+        bubbleMaterial = Instantiate(bubbleMaterial);
+        // Assign the new instance to the SpriteRenderer.
+        GetComponent<SpriteRenderer>().material = bubbleMaterial;
+
         // Ensure initial impact values are zero.
         currentImpactStrength = 0f;
         currentImpactWiggle = 0f;

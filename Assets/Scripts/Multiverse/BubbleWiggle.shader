@@ -71,7 +71,8 @@ Shader "Custom/BubbleWiggle"
             {
                 v2f o;
                 // Convert the vertex position into object space.
-                float3 localPos = mul(unity_WorldToObject, v.vertex).xyz;
+                float3 localPos = v.vertex.xyz;
+
                 float2 pos = localPos.xy;
                 float r = length(pos);
                 float angle = atan2(pos.y, pos.x);
