@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f435ece0782b4f8ca604e88ea3522e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkSize: 6
+  chunkSize: 12
   viewDistanceInChunks: 2
   minPlanetRadius: 0.4
   maxPlanetRadius: 1.4
-  maxPlanetsPerChunk: 12
+  maxPlanetsPerChunk: 24
   maxPlacementAttempts: 2
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &12878578

@@ -10,7 +10,9 @@ public class ProceduralCircle : MonoBehaviour
     [Tooltip("Radius of the circle.")]
     public float radius = 1f;
 
-    public string ChunkCoordDebug;
+    public GameObject residuePrefab;
+
+    public Vector2Int chunkCoord;
 
     public void Init(float r)
     {
@@ -22,8 +24,6 @@ public class ProceduralCircle : MonoBehaviour
         MeshFilter mf = GetComponent<MeshFilter>();
         Mesh mesh = GenerateCircleMesh(segments, radius);
         mf.mesh = mesh;
-
-        StartCoroutine(CheckOverlap());
     }
 
     int numSegments(float r)
@@ -75,36 +75,72 @@ public class ProceduralCircle : MonoBehaviour
     }
 
     // Coroutine to check for overlapping planets after initialization.
-    IEnumerator CheckOverlap()
+    //IEnumerator CheckOverlap()
+    //{
+    //    // Wait one frame to allow physics to update.
+    //    //yield return null;
+
+    //    bool shouldDelete = false;
+
+    //    // Use OverlapCircleAll to check for colliders overlapping this circle.
+    //    // We assume the circle's center is at transform.position and use the same radius.
+    //    Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+    //    foreach (Collider2D hit in hits)
+    //    {
+    //        // Ignore self.
+    //        if (hit.gameObject == gameObject)
+    //            continue;
+
+    //        // Optionally, check that the hit object is tagged as "Planet".
+    //        if (hit.gameObject.CompareTag("Universe"))
+    //        {
+    //            // If any other planet is overlapping, delete this planet.
+    //            shouldDelete = true;
+    //            break;
+    //        }
+    //    }
+
+    //    if (shouldDelete)
+    //    {
+    //        yield return null;
+    //        print("overlapped");
+    //        Destroy(gameObject);
+    //    }
+    //}
+
+    bool hasLeftResidue = false;
+
+    void Update()
     {
-        // Wait one frame to allow physics to update.
-        //yield return null;
-
-        bool shouldDelete = false;
-
-        // Use OverlapCircleAll to check for colliders overlapping this circle.
-        // We assume the circle's center is at transform.position and use the same radius.
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
         foreach (Collider2D hit in hits)
         {
-            // Ignore self.
-            if (hit.gameObject == gameObject)
-                continue;
+            if (hit.gameObject == gameObject) continue;
 
-            // Optionally, check that the hit object is tagged as "Planet".
-            if (hit.gameObject.CompareTag("Universe"))
+            if (hit.gameObject.CompareTag("Universe") || hit.gameObject.CompareTag("UniverseResidue"))
             {
-                // If any other planet is overlapping, delete this planet.
-                shouldDelete = true;
-                break;
+                if (!hasLeftResidue)
+                {
+                    hasLeftResidue = true;
+                    LeaveResidueCollider();
+                    Destroy(gameObject);
+                }
             }
         }
+    }
 
-        if (shouldDelete)
+
+    void LeaveResidueCollider()
+    {
+        if (residuePrefab != null)
         {
-            yield return null;
-            print("overlapped");
-            Destroy(gameObject);
+            GameObject residue = Instantiate(residuePrefab, transform.position, Quaternion.identity);
+            //residue.transform.localScale = Vector3.one * radius * 2f;
+            residue.GetComponent<CircleCollider2D>().radius = radius;
+            residue.GetComponent<ResidueCollider>().chunkCoord = chunkCoord;
+
+            // Ensure it is tracked in loadedChunks
+            WorldGenerator.Instance.RegisterResidueInChunk(chunkCoord, residue);
         }
     }
 }

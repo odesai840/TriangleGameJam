@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour
 {
+    public static WorldGenerator Instance; // Singleton reference
+
     [Header("Chunk & World Settings")]
     public int chunkSize = 100;           // World units per chunk (square chunks)
     public int viewDistanceInChunks = 2;  // How many chunks away from the player's chunk to load
@@ -18,6 +20,11 @@ public class WorldGenerator : MonoBehaviour
 
     // Dictionary to track generated chunks. Key is the chunk coordinate; Value is list of planet GameObjects in that chunk.
     private Dictionary<Vector2Int, List<GameObject>> loadedChunks = new Dictionary<Vector2Int, List<GameObject>>();
+
+    private void Awake()
+    {
+        Instance = this; // Singleton reference for residue tracking
+    }
 
     private void Start()
     {
@@ -72,6 +79,15 @@ public class WorldGenerator : MonoBehaviour
                 loadedChunks.Add(chunk, planetObjects);
             }
         }
+    }
+
+    public void RegisterResidueInChunk(Vector2Int chunk, GameObject residue)
+    {
+        if (!loadedChunks.ContainsKey(chunk))
+        {
+            loadedChunks[chunk] = new List<GameObject>();
+        }
+        loadedChunks[chunk].Add(residue);
     }
 
     // Returns the player's position. Assumes a GameObject tagged "Player" exists.
@@ -138,7 +154,7 @@ public class WorldGenerator : MonoBehaviour
             // Assuming the prefab is a unit circle, scale it according to the planet's radius.
             //planet.transform.localScale = Vector3.one * data.radius * 2f;
             planet.GetComponent<ProceduralCircle>().Init(data.radius);
-            planet.GetComponent<ProceduralCircle>().ChunkCoordDebug = data.chunkCoord.ToString();
+            planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
             planetObjects.Add(planet);
         }
         return planetObjects;
