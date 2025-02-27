@@ -6,7 +6,7 @@ Shader "Custom/BubbleWiggle"
         _WiggleAmount ("Wiggle Amount", Range(0, 0.1)) = 0.05
         _WiggleSpeed ("Wiggle Speed", Range(0, 10)) = 2
         _WiggleFreq ("Wiggle Frequency", Range(1, 20)) = 10
-        _WrinkleAmount ("Wrinkle Amount", Range(0, 0.1)) = 0.02
+        _WrinkleAmount ("Wrinkle Amount", Range(0, 0.1)) = 0.05
         _PhaseOffset ("Phase Offset Factor", Range(0,10)) = 5
         _ImpactPoint ("Impact Point", Vector) = (0,0,0,0)
         _ImpactStrength ("Impact Strength", Range(0, 0.2)) = 0.1

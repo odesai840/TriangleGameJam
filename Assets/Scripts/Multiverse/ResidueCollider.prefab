@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8845152565131683732}
   - component: {fileID: 571941018113630887}
+  - component: {fileID: 2218929911882268740}
   m_Layer: 0
   m_Name: ResidueCollider
   m_TagString: UniverseResidue
@@ -67,3 +68,16 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &2218929911882268740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2219627853734455712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb62efb32351b4386918b4ddcc6ca3a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chunkCoord: {x: 0, y: 0}

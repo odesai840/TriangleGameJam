@@ -158,6 +158,7 @@ MonoBehaviour:
   maxPlanetRadius: 1.4
   maxPlanetsPerChunk: 24
   maxPlacementAttempts: 2
+  planetsPerFrame: 2
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &12878578
 Transform:

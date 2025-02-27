@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,42 +7,43 @@ public class WorldGenerator : MonoBehaviour
     public static WorldGenerator Instance; // Singleton reference
 
     [Header("Chunk & World Settings")]
-    public int chunkSize = 100;           // World units per chunk (square chunks)
-    public int viewDistanceInChunks = 2;  // How many chunks away from the player's chunk to load
+    public int chunkSize = 100;
+    public int viewDistanceInChunks = 2;
 
     [Header("Planet Generation Settings")]
-    public float minPlanetRadius = 1f;    // Minimum planet radius
-    public float maxPlanetRadius = 5f;    // Maximum planet radius
-    public int maxPlanetsPerChunk = 3;    // Maximum number of planets per chunk
-    public int maxPlacementAttempts = 10; // How many times to try placing a planet before giving up
+    public float minPlanetRadius = 1f;
+    public float maxPlanetRadius = 5f;
+    public int maxPlanetsPerChunk = 3;
+    public int maxPlacementAttempts = 2;
+    public int planetsPerFrame = 2;  // How many planets to spawn per frame
 
     [Header("Planet Prefab")]
-    public GameObject planetPrefab;       // Prefab for the planet (should be a circle)
+    public GameObject planetPrefab;
 
-    // Dictionary to track generated chunks. Key is the chunk coordinate; Value is list of planet GameObjects in that chunk.
+    // Tracks the loaded chunk GameObjects (planets, residues, etc.)
     private Dictionary<Vector2Int, List<GameObject>> loadedChunks = new Dictionary<Vector2Int, List<GameObject>>();
+    // Tracks active coroutines that are loading planets for specific chunks
+    private Dictionary<Vector2Int, Coroutine> activeChunkCoroutines = new Dictionary<Vector2Int, Coroutine>();
 
     private void Awake()
     {
-        Instance = this; // Singleton reference for residue tracking
+        Instance = this;
     }
 
     private void Start()
     {
-        //put this in main menu
         GameSettings.InitializeSeed();
     }
 
     void Update()
     {
-        // Determine the player's current chunk.
         Vector2 playerPos = GetPlayerPosition();
         Vector2Int playerChunk = new Vector2Int(
             Mathf.FloorToInt(playerPos.x / chunkSize),
             Mathf.FloorToInt(playerPos.y / chunkSize)
         );
 
-        // Build a set of chunk coordinates that should be active.
+        // Which chunks should be active based on the player's position?
         HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
         for (int x = playerChunk.x - viewDistanceInChunks; x <= playerChunk.x + viewDistanceInChunks; x++)
         {
@@ -51,7 +53,7 @@ public class WorldGenerator : MonoBehaviour
             }
         }
 
-        // Remove chunks that are no longer needed.
+        // Remove chunks we no longer need
         List<Vector2Int> chunksToRemove = new List<Vector2Int>();
         foreach (var chunk in loadedChunks.Keys)
         {
@@ -60,25 +62,91 @@ public class WorldGenerator : MonoBehaviour
                 chunksToRemove.Add(chunk);
             }
         }
+
         foreach (var chunk in chunksToRemove)
         {
-            foreach (GameObject planet in loadedChunks[chunk])
+            // Safely stop the loading coroutine if it exists (and is non-null)
+            if (activeChunkCoroutines.TryGetValue(chunk, out Coroutine routine))
             {
-                Destroy(planet);
+                if (routine != null)
+                {
+                    StopCoroutine(routine);
+                }
+                activeChunkCoroutines.Remove(chunk);
             }
-            loadedChunks.Remove(chunk);
+
+            // Destroy all planets in this chunk
+            if (loadedChunks.ContainsKey(chunk))
+            {
+                foreach (GameObject planet in loadedChunks[chunk])
+                {
+                    Destroy(planet);
+                }
+                loadedChunks.Remove(chunk);
+            }
         }
 
-        // Generate and load chunks that are needed but not yet loaded.
+
+        // Generate and load chunks we need but haven't yet loaded
         foreach (Vector2Int chunk in neededChunks)
         {
             if (!loadedChunks.ContainsKey(chunk))
             {
+                // Create planet data deterministically
                 List<PlanetData> planetDatas = GeneratePlanetsForChunk(chunk);
-                List<GameObject> planetObjects = InstantiatePlanets(planetDatas);
-                loadedChunks.Add(chunk, planetObjects);
+                // Asynchronously load the planets
+                LoadPlanetsAsync(planetDatas, chunk);
             }
         }
+    }
+
+    // Public method to start a coroutine for loading a chunk's planets
+    public void LoadPlanetsAsync(List<PlanetData> planetDatas, Vector2Int chunkCoord)
+    {
+        // If we're already loading this chunk, do nothing
+        if (activeChunkCoroutines.ContainsKey(chunkCoord))
+            return;
+
+        // Start the coroutine and store it in our dictionary
+        Coroutine loadCoro = StartCoroutine(InstantiatePlanetsCoroutine(planetDatas, chunkCoord));
+        activeChunkCoroutines[chunkCoord] = loadCoro;
+    }
+
+    // The actual coroutine that spawns planets gradually
+    private IEnumerator InstantiatePlanetsCoroutine(List<PlanetData> planetDatas, Vector2Int chunkCoord)
+    {
+        // Ensure we have a list ready for this chunk
+        loadedChunks[chunkCoord] = new List<GameObject>();
+
+        for (int i = 0; i < planetDatas.Count; i++)
+        {
+            // If the chunk was removed while we're loading, stop immediately
+            if (!loadedChunks.ContainsKey(chunkCoord))
+            {
+                activeChunkCoroutines.Remove(chunkCoord);
+                yield break;
+            }
+
+            PlanetData data = planetDatas[i];
+
+            // Instantiate planet prefab
+            GameObject planet = Instantiate(planetPrefab, data.position, Quaternion.identity);
+            // Example init: radius, chunkCoord, etc.
+            planet.GetComponent<ProceduralCircle>().Init(data.radius);
+            planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
+
+            // Keep track of this planet
+            loadedChunks[chunkCoord].Add(planet);
+
+            // Spread out spawning: only spawn "planetsPerFrame" each frame
+            if ((i + 1) % planetsPerFrame == 0)
+            {
+                yield return null;
+            }
+        }
+
+        // Once we're done, remove from active coroutines
+        activeChunkCoroutines.Remove(chunkCoord);
     }
 
     public void RegisterResidueInChunk(Vector2Int chunk, GameObject residue)
@@ -90,19 +158,18 @@ public class WorldGenerator : MonoBehaviour
         loadedChunks[chunk].Add(residue);
     }
 
-    // Returns the player's position. Assumes a GameObject tagged "Player" exists.
+    // Find the player's position
     Vector2 GetPlayerPosition()
     {
         GameObject player = GameObject.Find("Player");
         return (player != null) ? player.transform.position : Vector2.zero;
     }
 
-    // Deterministically generate a list of PlanetData for a given chunk.
+    // Deterministically generate data for a given chunk
     List<PlanetData> GeneratePlanetsForChunk(Vector2Int chunkCoord)
     {
         List<PlanetData> planets = new List<PlanetData>();
 
-        // Create a seed based solely on the chunk coordinates.
         int seed = GameSettings.GlobalSeed ^ (chunkCoord.x * 73856093) ^ (chunkCoord.y * 19349663);
         System.Random rand = new System.Random(seed);
 
@@ -114,14 +181,15 @@ public class WorldGenerator : MonoBehaviour
             int attempts = 0;
             while (!placed && attempts < maxPlacementAttempts)
             {
-                // Random radius between min and max.
                 float radius = Mathf.Lerp(minPlanetRadius, maxPlanetRadius, (float)rand.NextDouble());
-                // Random position within the chunk.
                 float posX = (float)rand.NextDouble() * chunkSize;
                 float posY = (float)rand.NextDouble() * chunkSize;
-                Vector2 candidatePos = new Vector2(chunkCoord.x * chunkSize + posX, chunkCoord.y * chunkSize + posY);
+                Vector2 candidatePos = new Vector2(
+                    chunkCoord.x * chunkSize + posX,
+                    chunkCoord.y * chunkSize + posY
+                );
 
-                // Check against already placed planets in this chunk.
+                // Basic overlap check among planets in this chunk
                 bool overlaps = false;
                 foreach (PlanetData p in planets)
                 {
@@ -142,36 +210,19 @@ public class WorldGenerator : MonoBehaviour
         }
         return planets;
     }
-
-    // Instantiate planet GameObjects from a list of PlanetData.
-    List<GameObject> InstantiatePlanets(List<PlanetData> planetDatas)
-    {
-        List<GameObject> planetObjects = new List<GameObject>();
-        foreach (PlanetData data in planetDatas)
-        {
-            // Instantiate the planet prefab at the specified position.
-            GameObject planet = Instantiate(planetPrefab, data.position, Quaternion.identity);
-            // Assuming the prefab is a unit circle, scale it according to the planet's radius.
-            //planet.transform.localScale = Vector3.one * data.radius * 2f;
-            planet.GetComponent<ProceduralCircle>().Init(data.radius);
-            planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
-            planetObjects.Add(planet);
-        }
-        return planetObjects;
-    }
 }
 
-// Simple class to store planet data.
+// Simple data class for planet info
 public class PlanetData
 {
     public Vector2 position;
     public float radius;
-    public Vector2Int chunkCoord; //still need to delete
+    public Vector2Int chunkCoord;
 
     public PlanetData(Vector2 pos, float r, Vector2Int coord)
     {
-        chunkCoord = coord;
         position = pos;
         radius = r;
+        chunkCoord = coord;
     }
 }

@@ -36,7 +36,7 @@ Material:
     - _WiggleAmount: 0.05
     - _WiggleFreq: 10
     - _WiggleSpeed: 2
-    - _WrinkleAmount: 0.02
+    - _WrinkleAmount: 0.05
     m_Colors:
     - _ImpactPoint: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
