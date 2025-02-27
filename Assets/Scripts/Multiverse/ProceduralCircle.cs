@@ -24,6 +24,8 @@ public class ProceduralCircle : MonoBehaviour
         MeshFilter mf = GetComponent<MeshFilter>();
         Mesh mesh = GenerateCircleMesh(segments, radius);
         mf.mesh = mesh;
+
+        GetComponent<MeshRenderer>().material.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
     }
 
     int numSegments(float r)
