@@ -22,6 +22,8 @@ public class BubbleDeform : MonoBehaviour
         currentImpactWiggle = 0f;
         bubbleMaterial.SetFloat("_ImpactStrength", currentImpactStrength);
         bubbleMaterial.SetFloat("_ImpactWiggleAmount", currentImpactWiggle);
+
+        bubbleMaterial.mainTexture = WorldGenerator.Instance.universeColors[GetComponent<ProceduralCircle>().universeType];
     }
 
     void Update()

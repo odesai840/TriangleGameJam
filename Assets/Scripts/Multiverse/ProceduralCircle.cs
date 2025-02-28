@@ -14,7 +14,13 @@ public class ProceduralCircle : MonoBehaviour
 
     public Vector2Int chunkCoord;
 
-    public void Init(float r)
+    public Texture[] universeColors;
+
+    public int universeType;
+
+    public float rotation;
+
+    public void Init(float r, int type)
     {
         radius = r;
         segments = numSegments(r);
@@ -26,6 +32,8 @@ public class ProceduralCircle : MonoBehaviour
         mf.mesh = mesh;
 
         GetComponent<MeshRenderer>().material.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
+
+        universeType = type;
     }
 
     int numSegments(float r)
@@ -114,18 +122,23 @@ public class ProceduralCircle : MonoBehaviour
 
     void Update()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
-        foreach (Collider2D hit in hits)
-        {
-            if (hit.gameObject == gameObject) continue;
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + rotation);
 
-            if (hit.gameObject.CompareTag("Universe") || hit.gameObject.CompareTag("UniverseResidue"))
+        if (universeType != 4)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+            foreach (Collider2D hit in hits)
             {
-                if (!hasLeftResidue)
+                if (hit.gameObject == gameObject) continue;
+
+                if (hit.gameObject.CompareTag("Universe") || hit.gameObject.CompareTag("UniverseResidue"))
                 {
-                    hasLeftResidue = true;
-                    LeaveResidueCollider();
-                    Destroy(gameObject);
+                    if (!hasLeftResidue)
+                    {
+                        hasLeftResidue = true;
+                        LeaveResidueCollider();
+                        Destroy(gameObject);
+                    }
                 }
             }
         }

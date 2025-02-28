@@ -16,6 +16,11 @@ public class WorldGenerator : MonoBehaviour
     public int maxPlanetsPerChunk = 3;
     public int maxPlacementAttempts = 2;
     public int planetsPerFrame = 2;  // How many planets to spawn per frame
+    public int homeDistance = 3;
+
+    public Vector2 homePos;
+
+    public Texture[] universeColors;
 
     [Header("Planet Prefab")]
     public GameObject planetPrefab;
@@ -32,7 +37,18 @@ public class WorldGenerator : MonoBehaviour
 
     private void Start()
     {
-        GameSettings.InitializeSeed();
+        GameSettings.Initialize(); //do this in main menu
+
+        PlaceHome();
+    }
+
+    Vector2 GetRandomPointOnCircle(float r)
+    {
+        float angle = Random.Range(0f, Mathf.PI * 2); // Random angle in radians
+        float x = r * Mathf.Cos(angle);
+        float y = r * Mathf.Sin(angle);
+
+        return new Vector2(x, y);
     }
 
     void Update()
@@ -129,11 +145,7 @@ public class WorldGenerator : MonoBehaviour
 
             PlanetData data = planetDatas[i];
 
-            // Instantiate planet prefab
-            GameObject planet = Instantiate(planetPrefab, data.position, Quaternion.identity);
-            // Example init: radius, chunkCoord, etc.
-            planet.GetComponent<ProceduralCircle>().Init(data.radius);
-            planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
+            GameObject planet = InstantiatePlanet(data);
 
             // Keep track of this planet
             loadedChunks[chunkCoord].Add(planet);
@@ -147,6 +159,24 @@ public class WorldGenerator : MonoBehaviour
 
         // Once we're done, remove from active coroutines
         activeChunkCoroutines.Remove(chunkCoord);
+    }
+
+    GameObject InstantiatePlanet(PlanetData data)
+    {
+        // Instantiate planet prefab
+        GameObject planet = Instantiate(planetPrefab, data.position, Quaternion.identity);
+        // Example init: radius, chunkCoord, etc.
+        planet.GetComponent<ProceduralCircle>().Init(data.radius, data.universeType);
+        planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
+        planet.GetComponent<ProceduralCircle>().rotation = data.rot;
+        return planet;
+    }
+
+    void PlaceHome()
+    {
+        PlanetData home = new PlanetData(GetRandomPointOnCircle(homeDistance), maxPlanetRadius, new Vector2Int(), 4, Random.Range(-.01f,.01f));
+        GameObject homeObject = InstantiatePlanet(home);
+        homePos = homeObject.transform.position;
     }
 
     public void RegisterResidueInChunk(Vector2Int chunk, GameObject residue)
@@ -181,6 +211,10 @@ public class WorldGenerator : MonoBehaviour
             int attempts = 0;
             while (!placed && attempts < maxPlacementAttempts)
             {
+                int universeType = Random.Range(0, 3);
+                if (GameSettings.gotUniverse[universeType])
+                    universeType = 3;
+                float rotation = Random.Range(-.01f, .01f);
                 float radius = Mathf.Lerp(minPlanetRadius, maxPlanetRadius, (float)rand.NextDouble());
                 float posX = (float)rand.NextDouble() * chunkSize;
                 float posY = (float)rand.NextDouble() * chunkSize;
@@ -202,7 +236,7 @@ public class WorldGenerator : MonoBehaviour
 
                 if (!overlaps)
                 {
-                    planets.Add(new PlanetData(candidatePos, radius, chunkCoord));
+                    planets.Add(new PlanetData(candidatePos, radius, chunkCoord, universeType, rotation));
                     placed = true;
                 }
                 attempts++;
@@ -218,11 +252,15 @@ public class PlanetData
     public Vector2 position;
     public float radius;
     public Vector2Int chunkCoord;
+    public int universeType;
+    public float rot;
 
-    public PlanetData(Vector2 pos, float r, Vector2Int coord)
+    public PlanetData(Vector2 pos, float r, Vector2Int coord, int type, float rotation)
     {
         position = pos;
         radius = r;
         chunkCoord = coord;
+        universeType = type;
+        rot = rotation;
     }
 }

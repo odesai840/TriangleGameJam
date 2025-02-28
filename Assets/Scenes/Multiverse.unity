@@ -159,6 +159,13 @@ MonoBehaviour:
   maxPlanetsPerChunk: 24
   maxPlacementAttempts: 2
   planetsPerFrame: 2
+  homeDistance: 3
+  universeColors:
+  - {fileID: 2800000, guid: 9ce940876c94b4dbea5532bac5b89fff, type: 3}
+  - {fileID: 2800000, guid: 5be79b063d2594da6b309c83a7db1365, type: 3}
+  - {fileID: 2800000, guid: ff253cf99ba614b67951a1705903a770, type: 3}
+  - {fileID: 2800000, guid: 0a9f8cc2b27b9445d90d0ef1bc3d31e3, type: 3}
+  - {fileID: 2800000, guid: cdeb329bd603249418965d1beee5b76a, type: 3}
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &12878578
 Transform:
