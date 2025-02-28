@@ -21,8 +21,11 @@ Shader "Custom/BubbleWiggle"
         _InteriorWiggleSpeed ("Interior Wiggle Speed", Range(0, 5)) = 1
         _InteriorWiggleFreq  ("Interior Wiggle Frequency", Range(0.1, 10)) = 3
 
-        // NEW: unique seed per bubble instance
+        // Unique seed per bubble instance
         _BubbleSeed ("Bubble Random Seed", Float) = 0
+
+        // NEW: Darken Amount
+        _DarkenAmount ("Darken Amount", Range(0, 1)) = 0.0
     }
     SubShader
     {
@@ -70,8 +73,11 @@ Shader "Custom/BubbleWiggle"
             float _InteriorWiggleSpeed;
             float _InteriorWiggleFreq;
 
-            // NEW: bubble seed
+            // Unique seed
             float _BubbleSeed;
+
+            // Darken
+            float _DarkenAmount;
 
             // Basic noise function
             float myNoise(float2 p)
@@ -104,14 +110,16 @@ Shader "Custom/BubbleWiggle"
                 float r = length(pos);
 
                 // Keep center stable if extremely close to zero
-                if(r < 0.001)
+                if (r < 0.001)
                 {
                     o.vertex = UnityObjectToClipPos(v.vertex);
                     o.uv = v.uv;
                     return o;
                 }
 
+                //------------------------------------
                 // 1) Edge Wiggle: radial displacement
+                //------------------------------------
                 float angle = atan2(pos.y, pos.x);
                 float tEdge = _Time.y * _WiggleSpeed;
 
@@ -122,7 +130,9 @@ Shader "Custom/BubbleWiggle"
                 float highNoise = smoothNoise(float2(angle * _WiggleFreq * 3.0, tEdge + randomPhase * 1.5)) - 0.5;
                 float displacement = lowNoise * _WiggleAmount + highNoise * _WrinkleAmount;
 
+                //------------------------------------
                 // 2) Impact Deformation
+                //------------------------------------
                 float2 impactDir = pos - _ImpactPoint.xy;
                 float impactDist = length(impactDir);
                 if (impactDist < _ImpactRadius)
@@ -139,12 +149,13 @@ Shader "Custom/BubbleWiggle"
                 float2 newPos = float2(cos(angle) * rNew, sin(angle) * rNew);
                 localPos.xy = newPos;
 
+                //------------------------------------
                 // 3) Interior Wiggle: slower, bigger in-plane offset
+                //------------------------------------
                 float tInterior = _Time.y * _InteriorWiggleSpeed;
 
-                // Also add bubble seed to interior coordinate to shift each bubble's pattern
                 // We'll incorporate _BubbleSeed in the noise calls
-                float noiseX = smoothNoise(float2(pos.x * _InteriorWiggleFreq + tInterior + _BubbleSeed * 13.0,  // multiply seed by some constant
+                float noiseX = smoothNoise(float2(pos.x * _InteriorWiggleFreq + tInterior + _BubbleSeed * 13.0,
                                                   pos.y + _BubbleSeed));
                 float noiseY = smoothNoise(float2(pos.x + _BubbleSeed,
                                                   pos.y * _InteriorWiggleFreq + tInterior + _BubbleSeed * 7.0));
@@ -153,11 +164,13 @@ Shader "Custom/BubbleWiggle"
                 noiseX -= 0.5;
                 noiseY -= 0.5;
 
-                // Apply bigger amplitude
+                // Apply amplitude
                 localPos.x += noiseX * _InteriorWiggleAmount;
                 localPos.y += noiseY * _InteriorWiggleAmount;
 
+                //------------------------------------
                 // Final
+                //------------------------------------
                 v.vertex = float4(localPos, 1.0);
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
@@ -166,7 +179,15 @@ Shader "Custom/BubbleWiggle"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return tex2D(_MainTex, i.uv);
+                fixed4 c = tex2D(_MainTex, i.uv);
+
+                // Darken the color by _DarkenAmount
+                // e.g. if _DarkenAmount=0.3, we reduce the brightness by 30%
+                // c.rgb = c.rgb * (1 - _DarkenAmount);
+                // Or you can do a direct lerp to black:
+                c.rgb = lerp(c.rgb, 0, _DarkenAmount);
+
+                return c;
             }
 
             ENDCG

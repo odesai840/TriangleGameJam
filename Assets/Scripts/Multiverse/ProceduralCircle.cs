@@ -20,7 +20,7 @@ public class ProceduralCircle : MonoBehaviour
 
     public float rotation;
 
-    public void Init(float r, int type)
+    public void Init(float r, int type, bool isBackground)
     {
         radius = r;
         segments = numSegments(r);
@@ -32,6 +32,10 @@ public class ProceduralCircle : MonoBehaviour
         mf.mesh = mesh;
 
         GetComponent<MeshRenderer>().material.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
+        if (isBackground)
+        {
+            GetComponent<MeshRenderer>().material.SetFloat("_DarkenAmount", 0.5f);
+        }
 
         universeType = type;
     }
@@ -126,7 +130,7 @@ public class ProceduralCircle : MonoBehaviour
 
         if (universeType != 4)
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, 1 << this.gameObject.layer);
             foreach (Collider2D hit in hits)
             {
                 if (hit.gameObject == gameObject) continue;
@@ -150,6 +154,7 @@ public class ProceduralCircle : MonoBehaviour
         if (residuePrefab != null)
         {
             GameObject residue = Instantiate(residuePrefab, transform.position, Quaternion.identity);
+            residue.layer = this.gameObject.layer;
             //residue.transform.localScale = Vector3.one * radius * 2f;
             residue.GetComponent<CircleCollider2D>().radius = radius;
             residue.GetComponent<ResidueCollider>().chunkCoord = chunkCoord;

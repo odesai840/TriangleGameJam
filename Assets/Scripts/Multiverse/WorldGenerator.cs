@@ -21,6 +21,7 @@ public class WorldGenerator : MonoBehaviour
     public Vector2 homePos;
 
     public Texture[] universeColors;
+    public bool isBackground;
 
     [Header("Planet Prefab")]
     public GameObject planetPrefab;
@@ -33,18 +34,20 @@ public class WorldGenerator : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer("Background"), true);
     }
 
     private void Start()
     {
         GameSettings.Initialize(); //do this in main menu
 
-        PlaceHome();
+        if (! isBackground)
+            PlaceHome();
     }
 
-    Vector2 GetRandomPointOnCircle(float r)
+    Vector2 GetRandomPointOnCircle(float r, System.Random rand)
     {
-        float angle = Random.Range(0f, Mathf.PI * 2); // Random angle in radians
+        float angle = GetRandomFloat(rand, 0f, Mathf.PI * 2); // Random angle in radians
         float x = r * Mathf.Cos(angle);
         float y = r * Mathf.Sin(angle);
 
@@ -165,8 +168,16 @@ public class WorldGenerator : MonoBehaviour
     {
         // Instantiate planet prefab
         GameObject planet = Instantiate(planetPrefab, data.position, Quaternion.identity);
+        if (isBackground)
+        {
+            planet.layer = LayerMask.NameToLayer("Background");
+            planet.transform.position = new Vector3(planet.transform.position.x, planet.transform.position.y, 3);
+        } else
+        {
+            planet.layer = LayerMask.NameToLayer("Default");
+        }
         // Example init: radius, chunkCoord, etc.
-        planet.GetComponent<ProceduralCircle>().Init(data.radius, data.universeType);
+        planet.GetComponent<ProceduralCircle>().Init(data.radius, data.universeType, isBackground);
         planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
         planet.GetComponent<ProceduralCircle>().rotation = data.rot;
         return planet;
@@ -174,7 +185,8 @@ public class WorldGenerator : MonoBehaviour
 
     void PlaceHome()
     {
-        PlanetData home = new PlanetData(GetRandomPointOnCircle(homeDistance), maxPlanetRadius, new Vector2Int(), 4, Random.Range(-.01f,.01f));
+        System.Random rand = new System.Random(GameSettings.GlobalSeed);
+        PlanetData home = new PlanetData(GetRandomPointOnCircle(homeDistance, rand), maxPlanetRadius, new Vector2Int(), 4, GetRandomFloat(rand, -.01f,.01f));
         GameObject homeObject = InstantiatePlanet(home);
         homePos = homeObject.transform.position;
     }
@@ -186,6 +198,11 @@ public class WorldGenerator : MonoBehaviour
             loadedChunks[chunk] = new List<GameObject>();
         }
         loadedChunks[chunk].Add(residue);
+    }
+
+    float GetRandomFloat(System.Random rand, float min, float max)
+    {
+        return (float)(rand.NextDouble() * (max - min) + min);
     }
 
     // Find the player's position
@@ -200,7 +217,7 @@ public class WorldGenerator : MonoBehaviour
     {
         List<PlanetData> planets = new List<PlanetData>();
 
-        int seed = GameSettings.GlobalSeed ^ (chunkCoord.x * 73856093) ^ (chunkCoord.y * 19349663);
+        int seed = GameSettings.GlobalSeed ^ (chunkCoord.x * 73856093) ^ (chunkCoord.y * 19349663) ^ (isBackground ? 83492791 : 0);
         System.Random rand = new System.Random(seed);
 
         int planetCount = rand.Next(0, maxPlanetsPerChunk + 1);
@@ -211,10 +228,10 @@ public class WorldGenerator : MonoBehaviour
             int attempts = 0;
             while (!placed && attempts < maxPlacementAttempts)
             {
-                int universeType = Random.Range(0, 3);
+                int universeType = rand.Next(0, 3);
                 if (GameSettings.gotUniverse[universeType])
                     universeType = 3;
-                float rotation = Random.Range(-.01f, .01f);
+                float rotation = GetRandomFloat(rand, -.01f, .01f);
                 float radius = Mathf.Lerp(minPlanetRadius, maxPlanetRadius, (float)rand.NextDouble());
                 float posX = (float)rand.NextDouble() * chunkSize;
                 float posY = (float)rand.NextDouble() * chunkSize;

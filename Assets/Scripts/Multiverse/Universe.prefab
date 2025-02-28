@@ -181,3 +181,6 @@ MonoBehaviour:
   radius: 1
   residuePrefab: {fileID: 2219627853734455712, guid: 34673cef280f143958fb39494ff5e4a6, type: 3}
   chunkCoord: {x: 0, y: 0}
+  universeColors: []
+  universeType: 0
+  rotation: 0
