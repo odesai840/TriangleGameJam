@@ -978,7 +978,7 @@ MonoBehaviour:
   wallCheckDistance: 0.2
   preventWallSticking: 1
   numberOfWallChecks: 3
-  noFriction: {fileID: 0}
+  frictionMaterial: {fileID: 0}
   gravityReverseForce: 8
   gravityStrength: 1
   gravityReversalCooldown: 0.5
@@ -1447,8 +1447,8 @@ SceneRoots:
   - {fileID: 1452895096}
   - {fileID: 1254335783}
   - {fileID: 513386249}
-  - {fileID: 2093146346}
   - {fileID: 551204356}
-  - {fileID: 1581003140}
   - {fileID: 958086774}
+  - {fileID: 2093146346}
+  - {fileID: 1581003140}
   - {fileID: 1942398094}
