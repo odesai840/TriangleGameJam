@@ -20,7 +20,7 @@ public class ProceduralCircle : MonoBehaviour
 
     public float rotation;
 
-    public void Init(float r, int type, bool isBackground)
+    public void Init(float r, int type)
     {
         radius = r;
         segments = numSegments(r);
@@ -31,11 +31,11 @@ public class ProceduralCircle : MonoBehaviour
         Mesh mesh = GenerateCircleMesh(segments, radius);
         mf.mesh = mesh;
 
-        GetComponent<MeshRenderer>().material.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
-        if (isBackground)
-        {
-            GetComponent<MeshRenderer>().material.SetFloat("_DarkenAmount", 0.5f);
-        }
+        //GetComponent<MeshRenderer>().material.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
+        //if (isBackground)
+        //{
+        //    GetComponent<MeshRenderer>().material.SetFloat("_DarkenAmount", 0.5f);
+        //}
 
         universeType = type;
     }

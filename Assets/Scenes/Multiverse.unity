@@ -157,7 +157,7 @@ MonoBehaviour:
   minPlanetRadius: 0.4
   maxPlanetRadius: 1.4
   maxPlanetsPerChunk: 24
-  maxPlacementAttempts: 2
+  maxPlacementAttempts: 10
   planetsPerFrame: 2
   homeDistance: 3
   homePos: {x: 0, y: 0}
@@ -478,7 +478,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -20.408163}
+  m_LocalPosition: {x: 0, y: 0, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -577,7 +577,7 @@ GameObject:
   - component: {fileID: 1319605216}
   - component: {fileID: 1319605215}
   m_Layer: 0
-  m_Name: WorldGenerator (1)
+  m_Name: BackgroundWorldGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -600,7 +600,7 @@ MonoBehaviour:
   minPlanetRadius: 0.4
   maxPlanetRadius: 1.4
   maxPlanetsPerChunk: 24
-  maxPlacementAttempts: 2
+  maxPlacementAttempts: 10
   planetsPerFrame: 2
   homeDistance: 3
   homePos: {x: 0, y: 0}

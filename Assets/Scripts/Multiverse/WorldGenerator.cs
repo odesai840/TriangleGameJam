@@ -177,7 +177,8 @@ public class WorldGenerator : MonoBehaviour
             planet.layer = LayerMask.NameToLayer("Default");
         }
         // Example init: radius, chunkCoord, etc.
-        planet.GetComponent<ProceduralCircle>().Init(data.radius, data.universeType, isBackground);
+        planet.GetComponent<ProceduralCircle>().Init(data.radius, data.universeType);
+        planet.GetComponent<BubbleDeform>().Init(isBackground);
         planet.GetComponent<ProceduralCircle>().chunkCoord = data.chunkCoord;
         planet.GetComponent<ProceduralCircle>().rotation = data.rot;
         return planet;
