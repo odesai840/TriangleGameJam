@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class GravityController : MonoBehaviour
 {
     [Header("Movement Parameters")]
     [SerializeField] private float moveSpeed = 8f;
@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float frictionAmount = 0.2f;
 
     [Header("Jump Parameters")]
-    [SerializeField] private float jumpForce = 8f;
+    [SerializeField] private float jumpForce = 10f;
     [SerializeField] private float jumpCutMultiplier = 0.5f;
     [SerializeField] private float fallGravityMultiplier = 1.9f;
     [SerializeField] private float coyoteTime = 0.2f;
@@ -27,7 +27,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallCheckDistance = 0.2f;
     [SerializeField] private bool preventWallSticking = true;
     [SerializeField] private int numberOfWallChecks = 3;
-    [SerializeField] private PhysicsMaterial2D noFriction;
+    [SerializeField] private PhysicsMaterial2D frictionMaterial;
+
+    [Header("Gravity Reversal")]
+    [SerializeField] private float gravityReverseForce = 8f;
+    [SerializeField] private float gravityStrength = 1f;
+    [SerializeField] private float gravityReversalCooldown = 0.5f;
 
     // component references
     private Rigidbody2D rb;
@@ -43,17 +48,23 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingWall;
     private bool isSlidingDownWall;
 
+    // gravity variables
+    private bool isGravityReversed = false;
+    private float gravityReversalTimer = 0f;
+    private Transform playerTransform;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        playerTransform = transform;
         
         // create a frictionless material if one wasn't assigned
-        if (noFriction == null)
+        if (frictionMaterial == null)
         {
-            noFriction = new PhysicsMaterial2D("NoFriction");
-            noFriction.friction = 0f;
-            noFriction.bounciness = 0f;
+            frictionMaterial = new PhysicsMaterial2D("NoFriction");
+            frictionMaterial.friction = 0f;
+            frictionMaterial.bounciness = 0f;
         }
     }
 
@@ -92,7 +103,7 @@ public class PlayerController : MonoBehaviour
         if (jumpBufferCounter > 0 && coyoteTimeCounter > 0 && !isJumping)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0f);
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce((isGravityReversed ? Vector2.down : Vector2.up) * jumpForce, ForceMode2D.Impulse);
             
             isJumping = true;
             jumpBufferCounter = 0;
@@ -100,10 +111,14 @@ public class PlayerController : MonoBehaviour
         }
         
         // variable jump height
-        if (Input.GetKeyUp(KeyCode.W) && rb.velocity.y > 0)
+        if (Input.GetKeyUp(KeyCode.W) && 
+            ((rb.velocity.y > 0 && !isGravityReversed) || (rb.velocity.y < 0 && isGravityReversed)))
         {
             jumpInputReleased = true;
         }
+
+        // gravity reversal logic
+        HandleGravityReversal();
     }
 
     void FixedUpdate()
@@ -120,15 +135,64 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
+        Vector2 checkDirection = isGravityReversed ? Vector2.up : Vector2.down;
+        Vector2 checkPosition = groundCheck.position;
+        
+        // check for ground in the direction of gravity
+        if (isGravityReversed)
+        {
+            // move the check position upward when gravity is reversed
+            checkPosition = new Vector2(groundCheck.position.x, 
+                                       transform.position.y + boxCollider.bounds.extents.y + 0.1f);
+        }
+        
         // check if player is grounded
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer);
+        isGrounded = Physics2D.OverlapBox(checkPosition, groundCheckSize, 0f, groundLayer);
         
         // reset jump state when landing
-        if (isGrounded && rb.velocity.y <= 0)
+        if (isGrounded && 
+            ((rb.velocity.y <= 0 && !isGravityReversed) || (rb.velocity.y >= 0 && isGravityReversed)))
         {
             isJumping = false;
             jumpInputReleased = false;
         }
+    }
+
+    private void HandleGravityReversal()
+    {
+        // update cooldown timer
+        if (gravityReversalTimer > 0)
+        {
+            gravityReversalTimer -= Time.deltaTime;
+        }
+        
+        // check for gravity reversal input (space key)
+        if (Input.GetKeyDown(KeyCode.Space) && gravityReversalTimer <= 0)
+        {
+            // toggle gravity state
+            isGravityReversed = !isGravityReversed;
+            
+            // apply an initial force for the reversal
+            rb.velocity = new Vector2(rb.velocity.x, 0f); // reset vertical velocity
+            rb.AddForce((isGravityReversed ? Vector2.up : Vector2.down) * gravityReverseForce, ForceMode2D.Impulse);
+            
+            // flip the player upside down when gravity is reversed
+            FlipPlayerVertically();
+            
+            // set cooldown
+            gravityReversalTimer = gravityReversalCooldown;
+        }
+        
+        // apply custom gravity
+        rb.gravityScale = 0f; // disable built-in gravity
+        Vector2 gravityForce = (isGravityReversed ? Vector2.up : Vector2.down) * gravityStrength;
+        rb.AddForce(gravityForce, ForceMode2D.Force);
+    }
+
+    private void FlipPlayerVertically()
+    {
+        // rotate the player 180 degrees around the z-axis
+        playerTransform.rotation = Quaternion.Euler(0f, 0f, isGravityReversed ? 180f : 0f);
     }
 
     private void ApplyMovement()
@@ -175,20 +239,23 @@ public class PlayerController : MonoBehaviour
     private void ApplyJumpModifiers()
     {
         // apply jump cut when player releases jump button
-        if (jumpInputReleased && rb.velocity.y > 0)
+        if (jumpInputReleased)
         {
-            rb.AddForce(Vector2.down * rb.velocity.y * (1 - jumpCutMultiplier), ForceMode2D.Impulse);
-            jumpInputReleased = false;
+            if ((!isGravityReversed && rb.velocity.y > 0) || (isGravityReversed && rb.velocity.y < 0))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * jumpCutMultiplier);
+                jumpInputReleased = false;
+            }
         }
         
-        // apply increased gravity when falling
-        if (rb.velocity.y < 0)
+        // determine if falling based on gravity direction
+        bool isFalling = (!isGravityReversed && rb.velocity.y < 0) || (isGravityReversed && rb.velocity.y > 0);
+        
+        // apply custom gravity management instead of using gravity scale
+        if (isFalling)
         {
-            rb.gravityScale = fallGravityMultiplier;
-        }
-        else
-        {
-            rb.gravityScale = 1f;
+            Vector2 extraGravity = (isGravityReversed ? Vector2.up : Vector2.down) * (gravityStrength * (fallGravityMultiplier - 1f));
+            rb.AddForce(extraGravity, ForceMode2D.Force);
         }
     }
 
@@ -241,7 +308,8 @@ public class PlayerController : MonoBehaviour
         isTouchingWall = rightWallDetected || leftWallDetected;
         
         // check if sliding down a wall (touching wall, not grounded, and falling)
-        isSlidingDownWall = isTouchingWall && !isGrounded && rb.velocity.y < 0;
+        bool isFalling = (!isGravityReversed && rb.velocity.y < 0) || (isGravityReversed && rb.velocity.y > 0);
+        isSlidingDownWall = isTouchingWall && !isGrounded && isFalling;
         
         // manage physics material to prevent sticking
         if (preventWallSticking)
@@ -249,12 +317,20 @@ public class PlayerController : MonoBehaviour
             if (!isGrounded)
             {
                 // when in air, use frictionless material
-                boxCollider.sharedMaterial = noFriction;
+                boxCollider.sharedMaterial = frictionMaterial;
                 
                 // if sliding down wall, ensure velocity is not artificially limited
                 if (isSlidingDownWall)
                 {
-                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -15f));
+                    float maxSlideSpeed = 15f;
+                    if (isGravityReversed)
+                    {
+                        rb.velocity = new Vector2(rb.velocity.x, Mathf.Min(rb.velocity.y, maxSlideSpeed));
+                    }
+                    else
+                    {
+                        rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -maxSlideSpeed));
+                    }
                 }
             }
         }
