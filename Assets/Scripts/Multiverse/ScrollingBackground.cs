@@ -34,6 +34,8 @@ public class ScrollingBackground : MonoBehaviour
         float offsetX = camPos.x * parallaxFactor;
         float offsetY = camPos.y * parallaxFactor;
 
+        transform.position = new Vector3(camPos.x, camPos.y, 3.1f);
+
         // If you only want horizontal
         if (lockVertical) offsetY = 0f;
 
