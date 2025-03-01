@@ -133,7 +133,6 @@ public class GravityController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Vector2 checkDirection = isGravityReversed ? Vector2.up : Vector2.down;
         Vector2 checkPosition = groundCheck.position;
         
         // check for ground in the direction of gravity

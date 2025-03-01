@@ -12,9 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Universes/Type1.unity
     guid: 716897090a32d0d4797aadcc499adf6f
   - enabled: 1
-    path: Assets/Scenes/Universes/Type1/Type1-2.unity
-    guid: 88dd2dfa73180b641906b0597dccd24c
+    path: Assets/Scenes/Universes/Type2.unity
+    guid: 2ba1b8cd0224e99498ce7c205563cc91
   - enabled: 1
-    path: Assets/Scenes/Universes/Type1/Type1-3.unity
-    guid: 5e3cca00c8ec87b4dae329ff1373d540
+    path: Assets/Scenes/Universes/Type3.unity
+    guid: 7d9bb48c52468b34d896da5fa0fe8059
   m_configObjects: {}
