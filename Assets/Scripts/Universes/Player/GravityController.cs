@@ -32,7 +32,6 @@ public class GravityController : MonoBehaviour
     [Header("Gravity Reversal")]
     [SerializeField] private float gravityReverseForce = 8f;
     [SerializeField] private float gravityStrength = 1f;
-    [SerializeField] private float gravityReversalCooldown = 0.5f;
 
     // component references
     private Rigidbody2D rb;
@@ -50,7 +49,6 @@ public class GravityController : MonoBehaviour
 
     // gravity variables
     private bool isGravityReversed = false;
-    private float gravityReversalTimer = 0f;
     private Transform playerTransform;
 
     void Awake()
@@ -160,14 +158,8 @@ public class GravityController : MonoBehaviour
 
     private void HandleGravityReversal()
     {
-        // update cooldown timer
-        if (gravityReversalTimer > 0)
-        {
-            gravityReversalTimer -= Time.deltaTime;
-        }
-        
-        // check for gravity reversal input (space key)
-        if (Input.GetKeyDown(KeyCode.Space) && gravityReversalTimer <= 0)
+        // check for gravity reversal input (space key) and if player is grounded
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             // toggle gravity state
             isGravityReversed = !isGravityReversed;
@@ -178,9 +170,6 @@ public class GravityController : MonoBehaviour
             
             // flip the player upside down when gravity is reversed
             FlipPlayerVertically();
-            
-            // set cooldown
-            gravityReversalTimer = gravityReversalCooldown;
         }
         
         // apply custom gravity

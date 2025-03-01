@@ -555,12 +555,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0fd41adf26d42141b48f6677e006728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8
+  moveSpeed: 12
   acceleration: 60
   deceleration: 60
   velocityPower: 0.9
   frictionAmount: 0.2
-  jumpForce: 10
+  jumpForce: 12
   jumpCutMultiplier: 0.5
   fallGravityMultiplier: 1.9
   coyoteTime: 0.2
