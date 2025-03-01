@@ -160,6 +160,7 @@ MonoBehaviour:
   maxPlacementAttempts: 10
   planetsPerFrame: 2
   homeDistance: 3
+  noForegroundRadius: 2
   homePos: {x: 0, y: 0}
   universeColors:
   - {fileID: 2800000, guid: 9ce940876c94b4dbea5532bac5b89fff, type: 3}
@@ -215,9 +216,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cffd138716dd47d1a138ba40c38bc71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 90
-  acceleration: 5
-  deceleration: 5
+  rotationAccel: 160
+  rotationDrag: 60
+  maxAngularSpeed: 320
+  forwardAccel: 5
+  backwardAccel: 3
+  linearDrag: 1
+  maxSpeed: 10
 --- !u!50 &167188023
 Rigidbody2D:
   serializedVersion: 4
@@ -244,7 +249,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!4 &167188025
 Transform:
   m_ObjectHideFlags: 0
@@ -555,6 +560,7 @@ MonoBehaviour:
   maxPlacementAttempts: 10
   planetsPerFrame: 2
   homeDistance: 3
+  noForegroundRadius: 0
   homePos: {x: 0, y: 0}
   universeColors:
   - {fileID: 2800000, guid: ffdcc53f5097a8249ad4a3012a1633a0, type: 3}

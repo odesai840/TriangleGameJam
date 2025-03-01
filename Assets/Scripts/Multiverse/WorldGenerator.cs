@@ -18,6 +18,8 @@ public class WorldGenerator : MonoBehaviour
     public int planetsPerFrame = 2;  // How many planets to spawn per frame
     public int homeDistance = 3;
 
+    public float noForegroundRadius;
+
     public Vector2 homePos;
 
     public Texture[] universeColors;
@@ -243,6 +245,19 @@ public class WorldGenerator : MonoBehaviour
 
                 // Basic overlap check among planets in this chunk
                 bool overlaps = false;
+
+                // 1) If it's foreground (isBackground == false),
+                //    skip if inside the "noForegroundRadius" around (0,0).
+                if (!isBackground)
+                {
+                    // Check if the candidate center is too close to origin
+                    float distFromOrigin = candidatePos.magnitude;
+                    if (distFromOrigin < (noForegroundRadius + radius))
+                    {
+                        overlaps = true;
+                    }
+                }
+
                 foreach (PlanetData p in planets)
                 {
                     if (Vector2.Distance(p.position, candidatePos) < (p.radius + radius))
