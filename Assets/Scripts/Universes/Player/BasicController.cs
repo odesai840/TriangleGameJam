@@ -261,7 +261,7 @@ public class BasicController : MonoBehaviour
     }
     
     // uncomment this function for debug stuff in scene view
-    /* private void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         // draw ground check gizmo
         if (groundCheck != null)
@@ -288,5 +288,5 @@ public class BasicController : MonoBehaviour
                 Gizmos.DrawRay(origin, Vector2.left * (colliderWidth / 2 + wallCheckDistance));
             }
         }
-    } */
+    }
 }
