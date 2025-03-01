@@ -558,11 +558,11 @@ MonoBehaviour:
   homeDistance: 3
   homePos: {x: 0, y: 0}
   universeColors:
-  - {fileID: 2800000, guid: 9ce940876c94b4dbea5532bac5b89fff, type: 3}
-  - {fileID: 2800000, guid: 5be79b063d2594da6b309c83a7db1365, type: 3}
-  - {fileID: 2800000, guid: ff253cf99ba614b67951a1705903a770, type: 3}
-  - {fileID: 2800000, guid: 0a9f8cc2b27b9445d90d0ef1bc3d31e3, type: 3}
-  - {fileID: 2800000, guid: cdeb329bd603249418965d1beee5b76a, type: 3}
+  - {fileID: 2800000, guid: ffdcc53f5097a8249ad4a3012a1633a0, type: 3}
+  - {fileID: 2800000, guid: 8fc9afbec07db4944aabdd9d7f751875, type: 3}
+  - {fileID: 2800000, guid: 2e88a049fa4f46245beb20409ad7898f, type: 3}
+  - {fileID: 2800000, guid: 0c1f62817c0d53f4b9dcc63f0e9cb272, type: 3}
+  - {fileID: 2800000, guid: be80feb9236538a4481b15933e555aa1, type: 3}
   isBackground: 1
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &1319605216
