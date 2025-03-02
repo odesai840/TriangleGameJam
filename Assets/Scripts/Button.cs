@@ -10,4 +10,14 @@ public class Button : MonoBehaviour
     {
         SceneManager.LoadSceneAsync("Multiverse");
     }
+
+    public void Credits()
+    {
+        SceneManager.LoadSceneAsync("Credits");
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadSceneAsync("Title");
+    }
 }
