@@ -96,7 +96,7 @@ public class CameraChaser : MonoBehaviour
                     SceneManager.LoadScene("Multiverse");
                     break;
                 case 4:
-                    SceneManager.LoadScene("Type1"); //replace with end animation
+                    SceneManager.LoadScene("Title"); //replace with end animation
                     break;
             }
         }

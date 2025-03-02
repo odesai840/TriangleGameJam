@@ -163,8 +163,8 @@ MonoBehaviour:
   noForegroundRadius: 2
   homePos: {x: 0, y: 0}
   universeColors:
-  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
   - {fileID: 2800000, guid: f76885a9dec394343b035234110e03cc, type: 3}
+  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
   - {fileID: 2800000, guid: e0579818f655f4efc80ea72a3f04f5a0, type: 3}
   - {fileID: 2800000, guid: 128e43fd8236f4d13a0b0c63f96aa347, type: 3}
   - {fileID: 2800000, guid: 581ebb68da8b0420db9a8c571a0b2983, type: 3}
@@ -628,8 +628,8 @@ MonoBehaviour:
   noForegroundRadius: 0
   homePos: {x: 0, y: 0}
   universeColors:
-  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
   - {fileID: 2800000, guid: f76885a9dec394343b035234110e03cc, type: 3}
+  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
   - {fileID: 2800000, guid: e0579818f655f4efc80ea72a3f04f5a0, type: 3}
   - {fileID: 2800000, guid: 128e43fd8236f4d13a0b0c63f96aa347, type: 3}
   - {fileID: 2800000, guid: 581ebb68da8b0420db9a8c571a0b2983, type: 3}

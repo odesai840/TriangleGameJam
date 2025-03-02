@@ -24,21 +24,21 @@ public class TopDownPhysicsController : MonoBehaviour
         // rb.angularDrag = 0f;
     }
 
+    private void Start()
+    {
+        transform.position = GameSettings.multiverseStartPoint;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Universe")
         {
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            // Get contact point
-            Vector2 contactPoint = collision.GetContact(0).point;
-            // Get normal of collision (points away from B)
-            Vector2 normal = collision.GetContact(0).normal;
-            // Get velocity of object A before collision
-            Vector2 velocity = rb.velocity;
-            // Calculate the rollback distance
-            float rollbackDistance = velocity.magnitude * Time.fixedDeltaTime * 0.5f; // Adjust 0.5f for fine-tuning
-            // Move A slightly before impact
-            Vector2 newPosition = contactPoint - normal * rollbackDistance;
+            // Get the first contact point
+            ContactPoint2D contact = collision.GetContact(0);
+
+            // Calculate new position: move slightly away from collision point
+            Vector2 newPosition = contact.point + (contact.normal * .5f);
+
             GameSettings.multiverseStartPoint = newPosition;
 
             GameObject.FindObjectOfType<CameraChaser>().universeType = collision.gameObject.GetComponent<ProceduralCircle>().universeType;
