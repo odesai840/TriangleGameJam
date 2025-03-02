@@ -18,6 +18,11 @@ public class CameraChaser : MonoBehaviour
         transform.position = startPos;
         this.zoomingIn = zoomingIn;
         chasingPos = goal;
+
+        if (zoomingIn)
+            transform.position = new Vector3(transform.position.x, transform.position.y, 17.5f);
+        else
+            transform.position = new Vector3(transform.position.x, transform.position.y, 1f);
     }
 
     Vector3 GoalPos()
@@ -40,10 +45,10 @@ public class CameraChaser : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y, 1f);
+        //transform.position = new Vector3(transform.position.x, transform.position.y, 1f);
         player = GameObject.Find("Player");
 
-        SetGoal(new Vector3(0, 0, 0), null, false);
+        SetGoal(GameSettings.multiverseStartPoint, null, false);
     }
 
     public static float MapRange(float value, float inMin, float inMax, float outMin, float outMax)

@@ -24,6 +24,14 @@ public class TopDownPhysicsController : MonoBehaviour
         // rb.angularDrag = 0f;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Universe")
+        {
+            print("UNIVERSE");
+        }
+    }
+
     void FixedUpdate()
     {
         // 1) READ INPUT

@@ -14,6 +14,10 @@ public static class GameSettings
     {
         // You could generate a new random seed, or load from player settings, etc.
         GlobalSeed = Random.Range(int.MinValue, int.MaxValue);
-        Debug.Log("Global Seed: " + GlobalSeed);
+
+        multiverseStartPoint = new Vector3(0, 0, 0);
     }
+
+    //used for positioning ship when entering the multiverse
+    public static Vector3 multiverseStartPoint;
 }
