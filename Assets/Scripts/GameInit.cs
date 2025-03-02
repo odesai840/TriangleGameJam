@@ -8,5 +8,6 @@ public class GameInit : MonoBehaviour
     void Start()
     {
         GameSettings.Initialize();
+        MonsterData.Reset();
     }
 }
