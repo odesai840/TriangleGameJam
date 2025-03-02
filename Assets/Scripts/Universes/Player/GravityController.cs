@@ -35,7 +35,7 @@ public class GravityController : MonoBehaviour
 
     // component references
     private Rigidbody2D rb;
-    private BoxCollider2D boxCollider;
+    private Collider2D col;
 
     // movement variables
     private float moveInput;
@@ -54,7 +54,7 @@ public class GravityController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        col = GetComponent<Collider2D>();
         playerTransform = transform;
         
         // create a frictionless material if one wasn't assigned
@@ -140,7 +140,7 @@ public class GravityController : MonoBehaviour
         {
             // move the check position upward when gravity is reversed
             checkPosition = new Vector2(groundCheck.position.x, 
-                                       transform.position.y + boxCollider.bounds.extents.y + 0.1f);
+                                       transform.position.y + col.bounds.extents.y + 0.1f);
         }
         
         // check if player is grounded
@@ -250,14 +250,14 @@ public class GravityController : MonoBehaviour
     // check for wall collisions
     private void CheckWallCollision()
     {
-        if (boxCollider == null) return;
+        if (col == null) return;
         
         bool rightWallDetected = false;
         bool leftWallDetected = false;
         
         // get the bounds of the collider
-        float colliderHeight = boxCollider.bounds.size.y;
-        float colliderWidth = boxCollider.bounds.size.x;
+        float colliderHeight = col.bounds.size.y;
+        float colliderWidth = col.bounds.size.x;
         
         // distribute ray origins along the height of the collider
         Vector2[] rayOrigins = new Vector2[numberOfWallChecks];
@@ -305,7 +305,7 @@ public class GravityController : MonoBehaviour
             if (!isGrounded)
             {
                 // when in air, use frictionless material
-                boxCollider.sharedMaterial = frictionMaterial;
+                col.sharedMaterial = frictionMaterial;
                 
                 // if sliding down wall, ensure velocity is not artificially limited
                 if (isSlidingDownWall)
@@ -324,6 +324,22 @@ public class GravityController : MonoBehaviour
         }
     }
     
+    public void ResetGravity()
+    {
+        // Only reset if gravity is currently reversed
+        if (isGravityReversed)
+        {
+            isGravityReversed = false;
+            FlipPlayerVertically(); // Flip the player back to normal orientation
+        
+            // Reset vertical velocity to prevent any unexpected movement
+            if (rb != null)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, 0f);
+            }
+        }
+    }
+    
     // uncomment this function for debug stuff in scene view
     private void OnDrawGizmos()
     {
@@ -335,7 +351,7 @@ public class GravityController : MonoBehaviour
         }
         
         // draw wall check gizmos
-        if (boxCollider != null)
+        if (col != null)
         {
             float colliderHeight = GetComponent<BoxCollider2D>().bounds.size.y;
             float colliderWidth = GetComponent<BoxCollider2D>().bounds.size.x;
