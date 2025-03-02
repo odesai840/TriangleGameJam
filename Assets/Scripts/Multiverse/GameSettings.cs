@@ -9,7 +9,16 @@ public static class GameSettings
     //at end of universe level, set to 1,2, or 3 if won. set to null if lost. then transition scene to multiverse
     public static void LevelWon(int levelNum)
     {
+        gotUniverse[levelNum] = true;
+    }
 
+    public static bool GameWon()
+    {
+        int count = 0;
+        foreach (bool b in gotUniverse)
+            if (b)
+                count++;
+        return count == 3;
     }
 
     // Call this once at game start.

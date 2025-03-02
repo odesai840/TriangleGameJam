@@ -41,7 +41,7 @@ public class WorldGenerator : MonoBehaviour
 
     private void Start()
     {
-        GameSettings.Initialize(); //do this in main menu
+        //GameSettings.Initialize(); //do this in main menu
 
         if (! isBackground)
             PlaceHome();
@@ -191,6 +191,8 @@ public class WorldGenerator : MonoBehaviour
         System.Random rand = new System.Random(GameSettings.GlobalSeed);
         PlanetData home = new PlanetData(GetRandomPointOnCircle(homeDistance, rand), maxPlanetRadius, new Vector2Int(), 4, GetRandomFloat(rand, -.01f,.01f));
         GameObject homeObject = InstantiatePlanet(home);
+        if (GameObject.FindObjectOfType<RotateTowardsTarget>() != null)
+            GameObject.FindObjectOfType<RotateTowardsTarget>().target = homeObject.transform;
         homePos = homeObject.transform.position;
     }
 
