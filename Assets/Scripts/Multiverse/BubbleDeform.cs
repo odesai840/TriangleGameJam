@@ -25,7 +25,7 @@ public class BubbleDeform : MonoBehaviour
         myBubbleMaterial.SetFloat("_BubbleSeed", Random.Range(0f, 9999f));
         if (isBackground)
         {
-            myBubbleMaterial.SetFloat("_DarkenAmount", 0.8f);
+            myBubbleMaterial.SetFloat("_DarkenAmount", 0.97f);
         }
 
         myBubbleMaterial.mainTexture = WorldGenerator.Instance.universeColors[GetComponent<ProceduralCircle>().universeType];

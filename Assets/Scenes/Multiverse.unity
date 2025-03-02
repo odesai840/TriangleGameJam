@@ -163,11 +163,11 @@ MonoBehaviour:
   noForegroundRadius: 2
   homePos: {x: 0, y: 0}
   universeColors:
-  - {fileID: 2800000, guid: 9ce940876c94b4dbea5532bac5b89fff, type: 3}
-  - {fileID: 2800000, guid: 5be79b063d2594da6b309c83a7db1365, type: 3}
-  - {fileID: 2800000, guid: ff253cf99ba614b67951a1705903a770, type: 3}
-  - {fileID: 2800000, guid: 0a9f8cc2b27b9445d90d0ef1bc3d31e3, type: 3}
-  - {fileID: 2800000, guid: cdeb329bd603249418965d1beee5b76a, type: 3}
+  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
+  - {fileID: 2800000, guid: f76885a9dec394343b035234110e03cc, type: 3}
+  - {fileID: 2800000, guid: e0579818f655f4efc80ea72a3f04f5a0, type: 3}
+  - {fileID: 2800000, guid: 128e43fd8236f4d13a0b0c63f96aa347, type: 3}
+  - {fileID: 2800000, guid: 581ebb68da8b0420db9a8c571a0b2983, type: 3}
   isBackground: 0
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &12878578
@@ -576,11 +576,11 @@ MonoBehaviour:
   noForegroundRadius: 0
   homePos: {x: 0, y: 0}
   universeColors:
-  - {fileID: 2800000, guid: ffdcc53f5097a8249ad4a3012a1633a0, type: 3}
-  - {fileID: 2800000, guid: 8fc9afbec07db4944aabdd9d7f751875, type: 3}
-  - {fileID: 2800000, guid: 2e88a049fa4f46245beb20409ad7898f, type: 3}
-  - {fileID: 2800000, guid: 0c1f62817c0d53f4b9dcc63f0e9cb272, type: 3}
-  - {fileID: 2800000, guid: be80feb9236538a4481b15933e555aa1, type: 3}
+  - {fileID: 2800000, guid: 288e312e5f9624fb79d667ceba74887d, type: 3}
+  - {fileID: 2800000, guid: f76885a9dec394343b035234110e03cc, type: 3}
+  - {fileID: 2800000, guid: e0579818f655f4efc80ea72a3f04f5a0, type: 3}
+  - {fileID: 2800000, guid: 128e43fd8236f4d13a0b0c63f96aa347, type: 3}
+  - {fileID: 2800000, guid: 581ebb68da8b0420db9a8c571a0b2983, type: 3}
   isBackground: 1
   planetPrefab: {fileID: 1067006887630185640, guid: 17264a27e5cde4080984c11459774caa, type: 3}
 --- !u!4 &1319605216
@@ -710,7 +710,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 3.1}
-  m_LocalScale: {x: 10.9, y: 10.9, z: 10.9}
+  m_LocalScale: {x: 2.23, y: 2.23, z: 2.23}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -727,9 +727,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67811f22fc354e119669eaa264bac5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxFactor: 4
+  parallaxFactor: 8
   lockVertical: 0
-  textureScale: {x: 480, y: 270}
+  textureScale: {x: 1080, y: 1920}
 --- !u!212 &2106056691
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -771,7 +771,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 17ed170372b4e401d8aac3466a69fb99, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 93536515e01c94eeb854e77dcd94ee98, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
