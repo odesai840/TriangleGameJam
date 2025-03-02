@@ -35,10 +35,23 @@ public class TopDownPhysicsController : MonoBehaviour
     void FixedUpdate()
     {
         // 1) READ INPUT
-        bool left = Input.GetKey(KeyCode.LeftArrow);
-        bool right = Input.GetKey(KeyCode.RightArrow);
-        bool forward = Input.GetKey(KeyCode.UpArrow);
-        bool backward = Input.GetKey(KeyCode.DownArrow);
+        // Arrow keys
+        bool leftArrow = Input.GetKey(KeyCode.LeftArrow);
+        bool rightArrow = Input.GetKey(KeyCode.RightArrow);
+        bool upArrow = Input.GetKey(KeyCode.UpArrow);
+        bool downArrow = Input.GetKey(KeyCode.DownArrow);
+        
+        // WASD keys
+        bool aKey = Input.GetKey(KeyCode.A);
+        bool dKey = Input.GetKey(KeyCode.D);
+        bool wKey = Input.GetKey(KeyCode.W);
+        bool sKey = Input.GetKey(KeyCode.S);
+
+        // Combine inputs from both control schemes
+        bool left = leftArrow || aKey;
+        bool right = rightArrow || dKey;
+        bool forward = upArrow || wKey;
+        bool backward = downArrow || sKey;
 
         // 2) ANGULAR VELOCITY
         float turnInput = 0f;

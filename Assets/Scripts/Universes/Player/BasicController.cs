@@ -79,7 +79,7 @@ public class BasicController : MonoBehaviour
         }
         
         // jump buffer
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             jumpBufferCounter = jumpBufferTime;
         }
@@ -100,7 +100,7 @@ public class BasicController : MonoBehaviour
         }
         
         // variable jump height
-        if (Input.GetKeyUp(KeyCode.W) && rb.velocity.y > 0)
+        if ((Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) && rb.velocity.y > 0)
         {
             jumpInputReleased = true;
         }
