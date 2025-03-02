@@ -8,6 +8,6 @@ public class Button : MonoBehaviour
     // Start is called before the first frame update
     public void Play()
     {
-        SceneManager.LoadSceneAsync("LeavingHome");
+        SceneManager.LoadSceneAsync("Multiverse");
     }
 }
