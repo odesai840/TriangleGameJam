@@ -15,7 +15,7 @@ public class UniverseOne : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         if (collision.gameObject.CompareTag("Player"))
         {
-            GameSettings.LevelWon(1);
+            GameSettings.LevelWon(0);
             StartCoroutine(FadeOutLevel());
         }
     }

@@ -14,7 +14,7 @@ public class UniverseThree : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         if (collision.gameObject.CompareTag("Player"))
         {
-            GameSettings.LevelWon(3);
+            GameSettings.LevelWon(2);
             StartCoroutine(FadeOutLevel());
         }
     }

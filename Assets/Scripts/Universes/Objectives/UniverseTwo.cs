@@ -14,7 +14,7 @@ public class UniverseTwo : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         if (collision.gameObject.CompareTag("Player"))
         {
-            GameSettings.LevelWon(2);
+            GameSettings.LevelWon(1);
             StartCoroutine(FadeOutLevel());
         }
     }
