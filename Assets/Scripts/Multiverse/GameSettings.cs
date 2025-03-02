@@ -28,6 +28,8 @@ public static class GameSettings
         GlobalSeed = Random.Range(int.MinValue, int.MaxValue);
 
         multiverseStartPoint = new Vector3(0, 0, 0);
+
+        gotUniverse = new bool[] { false, false, false };
     }
 
     //used for positioning ship when entering the multiverse

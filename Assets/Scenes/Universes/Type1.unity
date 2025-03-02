@@ -8071,7 +8071,7 @@ MonoBehaviour:
   numberOfWallChecks: 3
   frictionMaterial: {fileID: 0}
   gravityReverseForce: 8
-  gravityStrength: 1
+  gravityStrength: 2
   fadeInDuration: 1
   fadeCurve:
     serializedVersion: 2
