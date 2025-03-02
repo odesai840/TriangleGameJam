@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraChaser : MonoBehaviour
 {
     GameObject player;
 
-    private Vector3? chasingPos = null;
-    Vector3 startPos;
-    bool zoomingIn = false;
-    float progress;
+    public Vector3? chasingPos = null;
+    public Vector3 startPos;
+    public bool zoomingIn = false;
+    public float progress;
+
+    public int universeType;
 
     public void SetGoal(Vector3 start, Vector3? goal, bool zoomingIn)
     {
@@ -20,9 +23,10 @@ public class CameraChaser : MonoBehaviour
         chasingPos = goal;
 
         if (zoomingIn)
-            transform.position = new Vector3(transform.position.x, transform.position.y, 17.5f);
+            transform.position = new Vector3(transform.position.x, transform.position.y, -17.5f);
         else
             transform.position = new Vector3(transform.position.x, transform.position.y, 1f);
+        startPos = transform.position;
     }
 
     Vector3 GoalPos()
@@ -38,7 +42,15 @@ public class CameraChaser : MonoBehaviour
             }
         } else
         {
-            return chasingPos.Value;
+            if (zoomingIn)
+            {
+                return new Vector3(chasingPos.Value.x, chasingPos.Value.y, 1);
+            }
+            else
+            {
+                return new Vector3(chasingPos.Value.x, chasingPos.Value.y, -17.5f);
+            }
+            //return chasingPos.Value;
         }
     }
 
@@ -61,13 +73,33 @@ public class CameraChaser : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        transform.rotation = player.transform.rotation;
+        if (player != null)
+            transform.rotation = player.transform.rotation;
 
         progress = Mathf.SmoothDamp(progress, 1f, ref progressVelocity, 0.5f); // Smoothly transition progress to 1
 
         transform.position = Vector3.Lerp(startPos, GoalPos(), progress);
 
         ScreenDissolveFeature.Instance.progress = MapRange(transform.position.z, 1, -17.5f, 0, 1);
+
+        if (zoomingIn && progress > 0.9f)
+        {
+            switch (universeType)
+            {
+                case 0:
+                case 1:
+                case 2:
+                    SceneManager.LoadScene("Type" + (universeType + 1));
+                    break;
+                case 3:
+                    GameSettings.multiverseStartPoint = new Vector3(0, 0, 0);
+                    SceneManager.LoadScene("Multiverse");
+                    break;
+                case 4:
+                    SceneManager.LoadScene("Type1"); //replace with end animation
+                    break;
+            }
+        }
         //if (reached)
         //{
         //    transform.position = GoalPos();
