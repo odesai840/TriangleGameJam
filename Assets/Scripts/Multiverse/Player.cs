@@ -24,11 +24,28 @@ public class TopDownPhysicsController : MonoBehaviour
         // rb.angularDrag = 0f;
     }
 
+    private void Start()
+    {
+        transform.position = GameSettings.multiverseStartPoint;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Universe")
         {
-            print("UNIVERSE");
+            // Get the first contact point
+            ContactPoint2D contact = collision.GetContact(0);
+
+            // Calculate new position: move slightly away from collision point
+            Vector2 newPosition = contact.point + (contact.normal * .5f);
+
+            GameSettings.multiverseStartPoint = newPosition;
+
+            GameObject.FindObjectOfType<CameraChaser>().universeType = collision.gameObject.GetComponent<ProceduralCircle>().universeType;
+
+            GameObject.FindObjectOfType<CameraChaser>().SetGoal(transform.position, collision.gameObject.transform.position, true);
+
+            Destroy(this.gameObject);
         }
     }
 

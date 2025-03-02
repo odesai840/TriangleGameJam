@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   dissolveMaterial: {fileID: 2100000, guid: f43be6489507c438fa8bacf118160def, type: 2}
-  progress: 0.99999857
+  progress: 0.99999905
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

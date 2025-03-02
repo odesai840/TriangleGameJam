@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerLives : MonoBehaviour
 {
@@ -9,7 +10,6 @@ public class PlayerLives : MonoBehaviour
 
     private GravityController gravityController;
     private Collider2D col;
-
     private Vector3 playerStartPos;
     private float currentLives;
     
@@ -34,8 +34,7 @@ public class PlayerLives : MonoBehaviour
             Debug.Log("Current Lives: " + currentLives);
             if (currentLives <= 0)
             {
-                // todo: switch to multiverse level here
-                Debug.Log("just pretend you failed the level ig");
+                SceneManager.LoadScene("Multiverse");
             }
         }
     }
