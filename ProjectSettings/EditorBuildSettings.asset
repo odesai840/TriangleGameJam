@@ -17,4 +17,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Universes/Type3.unity
     guid: 7d9bb48c52468b34d896da5fa0fe8059
+  - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 66b978d24a8ef5947bbb7a91ddfc1380
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: d9c4e6d2fc81575449c2c9d97ff0dfe4
+  - enabled: 1
+    path: Assets/Scenes/Universes/LeavingHome.unity
+    guid: e5ee4b302f26cb34ba1954da9968e462
+  - enabled: 1
+    path: Assets/Scenes/Universes/GoingHome.unity
+    guid: f8a10492b230acc4da2319b5e1eb9356
   m_configObjects: {}
