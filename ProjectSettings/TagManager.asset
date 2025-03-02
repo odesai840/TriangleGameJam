@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Universe
   - UniverseResidue
+  - Hazard
   layers:
   - Default
   - TransparentFX

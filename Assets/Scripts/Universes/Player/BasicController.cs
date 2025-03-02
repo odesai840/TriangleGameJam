@@ -31,7 +31,7 @@ public class BasicController : MonoBehaviour
 
     // component references
     private Rigidbody2D rb;
-    private BoxCollider2D boxCollider;
+    private Collider2D col;
 
     // movement variables
     private float moveInput;
@@ -46,7 +46,7 @@ public class BasicController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        col = GetComponent<Collider2D>();
         
         // create a frictionless material if one wasn't assigned
         if (frictionMaterial == null)
@@ -195,14 +195,14 @@ public class BasicController : MonoBehaviour
     // check for wall collisions
     private void CheckWallCollision()
     {
-        if (boxCollider == null) return;
+        if (col == null) return;
         
         bool rightWallDetected = false;
         bool leftWallDetected = false;
         
         // get the bounds of the collider
-        float colliderHeight = boxCollider.bounds.size.y;
-        float colliderWidth = boxCollider.bounds.size.x;
+        float colliderHeight = col.bounds.size.y;
+        float colliderWidth = col.bounds.size.x;
         
         // distribute ray origins along the height of the collider
         Vector2[] rayOrigins = new Vector2[numberOfWallChecks];
@@ -249,7 +249,7 @@ public class BasicController : MonoBehaviour
             if (!isGrounded)
             {
                 // when in air, use frictionless material
-                boxCollider.sharedMaterial = frictionMaterial;
+                col.sharedMaterial = frictionMaterial;
                 
                 // if sliding down wall, ensure velocity is not artificially limited
                 if (isSlidingDownWall)
@@ -271,7 +271,7 @@ public class BasicController : MonoBehaviour
         }
         
         // draw wall check gizmos
-        if (boxCollider != null)
+        if (col != null)
         {
             float colliderHeight = GetComponent<BoxCollider2D>().bounds.size.y;
             float colliderWidth = GetComponent<BoxCollider2D>().bounds.size.x;
