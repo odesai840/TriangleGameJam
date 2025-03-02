@@ -28,6 +28,10 @@ public class BasicController : MonoBehaviour
     [SerializeField] private bool preventWallSticking = true;
     [SerializeField] private int numberOfWallChecks = 3;
     [SerializeField] private PhysicsMaterial2D frictionMaterial;
+    
+    [Header("Screen Dissolve")]
+    [SerializeField] private float fadeInDuration = 1.0f;
+    [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     // component references
     private Rigidbody2D rb;
@@ -55,6 +59,11 @@ public class BasicController : MonoBehaviour
             frictionMaterial.friction = 0f;
             frictionMaterial.bounciness = 0f;
         }
+    }
+
+    void Start()
+    {
+        StartCoroutine(FadeDissolve());
     }
 
     void Update()
@@ -258,6 +267,26 @@ public class BasicController : MonoBehaviour
                 }
             }
         }
+    }
+    
+    private IEnumerator FadeDissolve()
+    {
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < fadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float normalizedTime = Mathf.Clamp01(elapsedTime / fadeInDuration);
+            float curveValue = fadeCurve.Evaluate(normalizedTime);
+            
+            float currentValue = Mathf.Lerp(0f, 1f, curveValue);
+            
+            ScreenDissolveFeature.Instance.progress = currentValue;
+            
+            yield return null;
+        }
+        
+        ScreenDissolveFeature.Instance.progress = 1f;
     }
     
     // uncomment this function for debug stuff in scene view

@@ -13,7 +13,7 @@ public class AsteroidSpawner : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine("SpawnRoutine");
+        StartCoroutine(SpawnRoutine());
     }
 
     private IEnumerator SpawnRoutine()

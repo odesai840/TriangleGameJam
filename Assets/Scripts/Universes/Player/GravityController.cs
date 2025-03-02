@@ -32,6 +32,10 @@ public class GravityController : MonoBehaviour
     [Header("Gravity Reversal")]
     [SerializeField] private float gravityReverseForce = 8f;
     [SerializeField] private float gravityStrength = 1f;
+    
+    [Header("Screen Dissolve")]
+    [SerializeField] private float fadeInDuration = 1.0f;
+    [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     // component references
     private Rigidbody2D rb;
@@ -64,6 +68,11 @@ public class GravityController : MonoBehaviour
             frictionMaterial.friction = 0f;
             frictionMaterial.bounciness = 0f;
         }
+    }
+    
+    void Start()
+    {
+        StartCoroutine(FadeDissolve());
     }
 
     void Update()
@@ -338,6 +347,26 @@ public class GravityController : MonoBehaviour
                 rb.velocity = new Vector2(rb.velocity.x, 0f);
             }
         }
+    }
+    
+    private IEnumerator FadeDissolve()
+    {
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < fadeInDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float normalizedTime = Mathf.Clamp01(elapsedTime / fadeInDuration);
+            float curveValue = fadeCurve.Evaluate(normalizedTime);
+            
+            float currentValue = Mathf.Lerp(0f, 1f, curveValue);
+            
+            ScreenDissolveFeature.Instance.progress = currentValue;
+            
+            yield return null;
+        }
+        
+        ScreenDissolveFeature.Instance.progress = 1f;
     }
     
     // uncomment this function for debug stuff in scene view
