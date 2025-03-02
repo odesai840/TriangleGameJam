@@ -56,9 +56,7 @@ public class MovingPlatform : MonoBehaviour
         // if we're starting at the endpoint, swap positions
         if (startAtEndpoint)
         {
-            Vector3 temp = startPosition;
-            startPosition = endPosition;
-            endPosition = temp;
+            (startPosition, endPosition) = (endPosition, startPosition);
             transform.position = startPosition;
             movingToEnd = true;
         }
