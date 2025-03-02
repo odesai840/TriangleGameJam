@@ -88,7 +88,7 @@ public class GravityController : MonoBehaviour
         }
         
         // jump buffer
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             jumpBufferCounter = jumpBufferTime;
         }
@@ -109,7 +109,7 @@ public class GravityController : MonoBehaviour
         }
         
         // variable jump height
-        if (Input.GetKeyUp(KeyCode.W) && 
+        if ((Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) && 
             ((rb.velocity.y > 0 && !isGravityReversed) || (rb.velocity.y < 0 && isGravityReversed)))
         {
             jumpInputReleased = true;
